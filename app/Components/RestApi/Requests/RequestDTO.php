@@ -2,13 +2,13 @@
 
 namespace App\Components\RestApi\Requests;
 
-use App\Components\RestApi\Requests\Attributes\Handlers\Interfaces\AfterHandlerInterface;
-use App\Components\RestApi\Requests\Attributes\Handlers\Interfaces\BeforeHandlerInterface;
+use App\Components\RestApi\Requests\Attributes\DTO\Interfaces\AfterHandlerInterface;
+use App\Components\RestApi\Requests\Attributes\DTO\Interfaces\BeforeHandlerInterface;
+use App\Components\RestApi\Requests\Fields\BasicField;
 use App\Components\RestApi\Requests\Reflections\ReflectionRequestDTO;
-use App\Components\RestApi\Requests\Validation\FieldsAttributes\BasicAbstract\Validated;
+use App\Components\RestApi\Requests\Rules\BasicAbstract\RuleInterface;
 use App\Components\RestApi\Requests\Validation\ValidationErrorsContainer;
 use App\Components\RestApi\Response\JsonResponse;
-use Illuminate\Support\Facades\Log;
 
 /**
  * TODO: добавить события
@@ -26,6 +26,8 @@ abstract class RequestDTO
 
     private array $fieldsNames = [];
 
+    private ?string $fieldNamePrefix = null;
+
     private ReflectionRequestDTO $reflectionRequestDTO;
 
     protected function __construct()
@@ -33,9 +35,10 @@ abstract class RequestDTO
         $this->init();
     }
 
-    public static function createFromRequest(): static
+    public static function createFromRequest(?string $fieldNamePrefix = null): static
     {
         $dto = static::create();
+        $dto->fieldNamePrefix = $fieldNamePrefix;
         $dto->handle();
         return $dto;
     }
@@ -77,20 +80,24 @@ abstract class RequestDTO
 
     private function handleData()
     {
-        foreach ($this->reflectionRequestDTO->getFields() as $fieldName => $field) {
+        foreach ($this->reflectionRequestDTO->getFields() as $fieldName => $refField) {
 
-            $refAttributes = $field->getAttributes();
+            $field = new BasicField(
+                name: $fieldName,
+                default: $refField->getDefaultValue(),
+                prefix: $this->fieldNamePrefix,
+                type: $refField->getType()->getName()
+            );
 
-            $value = request($fieldName, $field->getDefaultValue());
-
-            foreach ($refAttributes as $refAttribute) {
+            foreach ($refField->getAttributes() as $refAttribute) {
                 $attribute = $refAttribute->newInstance();
-                if ($this->validate && $attribute instanceof Validated) {
-                    $attribute->handle($fieldName, $value);
+                if ($attribute instanceof RuleInterface && !$this->validate) {
+                    continue;
                 }
+                $attribute->handle($field);
             }
 
-            $this->data[$fieldName] = $value;
+            $this->data[$fieldName] = $field->getValue();
         }
     }
 
@@ -160,7 +167,6 @@ abstract class RequestDTO
         $validationErrors = app(ValidationErrorsContainer::class)->getErrors();
 
         if (!empty($validationErrors)) {
-            Log::info(json_encode($this->getData()) .PHP_EOL. json_encode($validationErrors));
             app(JsonResponse::class)->throw()->validationError($validationErrors);
         }
     }
@@ -190,4 +196,5 @@ abstract class RequestDTO
         }
         return implode('&', $query);
     }
+
 }

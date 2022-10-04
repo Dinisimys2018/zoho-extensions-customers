@@ -2,8 +2,9 @@
 
 namespace App\Components\RestApi\Requests\Reflections;
 
-use App\Components\RestApi\Requests\Attributes\DisableParentAttributes;
-use App\Components\RestApi\Requests\Attributes\Handlers\Interfaces\HandlerInterface;
+use App\Components\RestApi\Requests\Attributes\DTO\DisableParentAttributes;
+use App\Components\RestApi\Requests\Attributes\DTO\Interfaces\HandlerInterface;
+use App\Components\RestApi\Requests\Fields\BasicField;
 use \ReflectionProperty;
 use \ReflectionClass;
 

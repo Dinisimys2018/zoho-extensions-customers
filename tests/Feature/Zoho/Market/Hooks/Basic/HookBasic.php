@@ -4,6 +4,7 @@ namespace Tests\Feature\Zoho\Market\Hooks\Basic;
 
 use App\Components\Zoho\Market\Requests\ActionRequestDTO;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 use Tests\Factory\RequestsDTO\ActionRequestsDTOFactory;
@@ -14,7 +15,7 @@ use Tests\TestCase;
 class HookBasic extends TestCase
 {
     use WithFaker;
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected const PREFIX_PATH = 'api/zoho/market';
 
@@ -38,20 +39,6 @@ class HookBasic extends TestCase
     protected function getToken()
     {
         return config('zoho.tokens.market');
-    }
-
-
-    public function test_success()
-    {
-        $queryString = 'token=' . $this->getToken() . '&';
-        $queryString .= 'companyId=1&';
-        $queryString .= 'extensionId=1&'; //need set real extensionId exists in DB
-        $queryString .= 'email=' . $this->faker->email;
-        $queryString .=  'zapikey=' . Str::random();
-        $response = $this->makeResponse($queryString);
-
-        $response->assertOk()
-            ->assertJsonPath('meta.status', 'success');
     }
 
     public function test_unauthorized()
