@@ -5,7 +5,7 @@ namespace App\Components\RestApi\Requests\Rules;
 use App\Components\RestApi\Requests\Rules\BasicAbstract\SoftBasicValidation;
 use Illuminate\Support\Facades\DB;
 
-#[\Attribute]
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 class ExistsInDB extends SoftBasicValidation
 {
     public function __construct(
@@ -25,6 +25,6 @@ class ExistsInDB extends SoftBasicValidation
 
     public function getErrorMessage(): string
     {
-        return "Record where column [$this->column={$this->getField()->getFullName()}] not exists in table [$this->table]";
+        return trans('validation.exists', ['attribute' => $this->getField()->getFullName()]);
     }
 }

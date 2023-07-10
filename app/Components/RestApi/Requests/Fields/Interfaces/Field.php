@@ -2,8 +2,12 @@
 
 namespace App\Components\RestApi\Requests\Fields\Interfaces;
 
+use App\Components\RestApi\Requests\Fields\Attributes\SourceTypes\SourceTypesEnum;
+
 abstract class Field
 {
+    protected SourceTypesEnum $sourceType = SourceTypesEnum::INPUT;
+
     public function __construct(
         protected ?string $name = null,
         protected ?string $sourceName = null,
@@ -65,7 +69,7 @@ abstract class Field
 
     public function getValue(): mixed
     {
-        return $this->value ?? request($this->getFullName(), $this->getDefault());
+        return $this->value ?? request()->{$this->getSourceType()->value}($this->getFullName(), $this->getDefault());
     }
 
     public function setType(mixed $type): self
@@ -92,5 +96,22 @@ abstract class Field
     public function getSourceName(): ?string
     {
         return $this->sourceName;
+    }
+
+    /**
+     * @param SourceTypesEnum $sourceType
+     */
+    public function setSourceType(SourceTypesEnum $sourceType): void
+    {
+        $this->sourceType = $sourceType;
+    }
+
+
+    /**
+     * @return SourceTypesEnum
+     */
+    public function getSourceType(): SourceTypesEnum
+    {
+        return $this->sourceType;
     }
 }

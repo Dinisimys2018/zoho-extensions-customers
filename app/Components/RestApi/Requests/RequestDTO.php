@@ -2,8 +2,8 @@
 
 namespace App\Components\RestApi\Requests;
 
-use App\Components\RestApi\Requests\Attributes\DTO\Interfaces\AfterHandlerInterface;
-use App\Components\RestApi\Requests\Attributes\DTO\Interfaces\BeforeHandlerInterface;
+use App\Components\RestApi\Requests\DTO\Attributes\Interfaces\AfterHandlerInterface;
+use App\Components\RestApi\Requests\DTO\Attributes\Interfaces\BeforeHandlerInterface;
 use App\Components\RestApi\Requests\Fields\BasicField;
 use App\Components\RestApi\Requests\Reflections\ReflectionRequestDTO;
 use App\Components\RestApi\Requests\Rules\BasicAbstract\RuleInterface;

@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 
 class ExtensionSeeder extends Seeder
 {
+
     /**
      * Run the database seeds.
      *
@@ -15,6 +16,8 @@ class ExtensionSeeder extends Seeder
      */
     public function run()
     {
-        Extension::factory()->create();
+        Extension::factory()->create([
+            'id' => 1
+        ]);
     }
 }

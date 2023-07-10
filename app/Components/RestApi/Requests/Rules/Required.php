@@ -4,7 +4,7 @@ namespace App\Components\RestApi\Requests\Rules;
 
 use App\Components\RestApi\Requests\Rules\BasicAbstract\SoftBasicValidation;
 
-#[\Attribute]
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 class Required extends SoftBasicValidation
 {
     public function validate(): bool

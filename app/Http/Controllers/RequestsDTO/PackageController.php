@@ -5,8 +5,9 @@ namespace App\Http\Controllers\RequestsDTO;
 use App\Components\RestApi\Requests\RequestDTO;
 use App\Components\RestApi\Response\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
-    class PackageController extends Controller
+class PackageController extends Controller
 {
     public function __construct(
         private JsonResponse $response,
@@ -14,7 +15,7 @@ use App\Http\Controllers\Controller;
     ) {
     }
 
-    public function test()
+    public function test(Request $request)
     {
         return $this->response->emptySuccess();
     }
